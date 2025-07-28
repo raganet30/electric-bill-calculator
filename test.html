@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Electric Bill Slip Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+     Bill Slip Generator
+  </nav>
+
+  <div class="container">
+    <h2>Electric Bill Slip Form</h2>
+
+    <label for="site">Barangay / Site</label>
+    <select id="site">
+      <option value="">-- Select Barangay --</option>
+    </select>
+
+    <label>Billing Period From:</label>
+    <input type="date" id="billFrom" />
+
+    <label>Billing Period To:</label>
+    <input type="date" id="billTo" />
+
+    <h3>Main Meter</h3>
+    <label>Current Reading</label>
+    <input type="number" id="mainCurr" />
+    <label>Previous Reading</label>
+    <input type="number" id="mainPrev" />
+    <label>Total Current Bill (₱)</label>
+    <input type="number" id="mainBill" step="0.01" />
+
+    <h3>Submeter</h3>
+    <label>Current Reading</label>
+    <input type="number" id="subCurr" />
+    <label>Previous Reading</label>
+    <input type="number" id="subPrev" />
+
+    <button onclick="generateBill()">Generate Bill</button>
+    
+  </div>
+
+  <!-- Modal for Result -->
+  <div id="modal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div class="modal-content">
+      <div id="billSlip"></div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Electric Billing System. All rights reserved.
+  </footer>
+
+  <script>
+    const barangays = [
+      "Brgy. Aurora", "Brgy. Ba-ay", "Brgy. Balite", "Brgy. Balud", "Brgy. Barobaybay",
+      "Brgy. Binaliw", "Brgy. Bonifacio", "Brgy. Buenavista", "Brgy. Bugko",
+      "Brgy. Cabacungan", "Brgy. Cacaransan", "Brgy. Cag-abaca", "Brgy. Cagbayang",
+      "Brgy. Caglanipao Norte", "Brgy. Caglanipao Sur", "Brgy. Cagmanipes Sur",
+      "Brgy. Cagnipa", "Brgy. Cag-olango", "Brgy. Cahumpan", "Brgy. Calanyugan",
+      "Brgy. Calapi", "Brgy. Cal-igang", "Brgy. Casandig I", "Brgy. Cogon",
+      "Brgy. Colab-Og", "Brgy. Danao I", "Brgy. Dona Pulqueria", "Brgy. Garcia",
+      "Brgy. Geratag", "Brgy. Happy Valley", "Brgy. Ibol", "Brgy. Ilo",
+      "Brgy. Inoraguiao", "Brgy. Jamoog", "Brgy. Jimautan", "Brgy. Lagundi",
+      "Brgy. Lao angan", "Brgy. Lapaan", "Brgy. Libertad", "Brgy. Longsob",
+      "Brgy. Lulugayan", "Brgy. Mabuhay", "Brgy. Malaga", "Brgy. Malajog",
+      "Brgy. Malayog", "Brgy. Malino", "Brgy. Malopalo", "Brgy. Manguino-o",
+      "Brgy. McKinley", "Brgy. Naga", "Brgy. New Mahayag", "Brgy. New Rizal",
+      "Brgy. NHA Site I", "Brgy. Obayan", "Brgy. Old Mahayag", "Brgy. Palale",
+      "Brgy. Panlayahan", "Brgy. Pasigay", "Brgy. Pena I", "Brgy. Pilar",
+      "Brgy. Placer", "Brgy. Pologon", "Brgy. Roxas", "Brgy. Salvacion",
+      "Brgy. San Agustin", "Brgy. San Juan", "Brgy. San Miguel", "Brgy. San Roque",
+      "Brgy. Seven Hills", "Brgy. Sinidman Oriental", "Brgy. Somoge", "Brgy. Tagnao",
+      "Brgy. Tambongan", "Brgy. Tarabucan", "Brgy. Tigbawon", "Brgy. Tinaplacan",
+      "Brgy. Veriato", "Brgy. Washington"
+    ];
+
+    function populateBarangays() {
+      const select = document.getElementById("site");
+      barangays.forEach(brgy => {
+        const option = document.createElement("option");
+        option.value = brgy;
+        option.textContent = brgy;
+        select.appendChild(option);
+      });
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return "";
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return new Date(dateStr).toLocaleDateString('en-US', options);
+    }
+
+    function generateBill() {
+      const site = document.getElementById("site").value || "N/A";
+      const from = document.getElementById("billFrom").value;
+      const to = document.getElementById("billTo").value;
+      const period = (from && to) ? `${formatDate(from)} to ${formatDate(to)}` : "N/A";
+
+      const mainPrev = parseFloat(document.getElementById("mainPrev").value);
+      const mainCurr = parseFloat(document.getElementById("mainCurr").value);
+      const mainBill = parseFloat(document.getElementById("mainBill").value);
+      const subPrev = parseFloat(document.getElementById("subPrev").value);
+      const subCurr = parseFloat(document.getElementById("subCurr").value);
+
+      if (
+        isNaN(mainPrev) || isNaN(mainCurr) || isNaN(mainBill) ||
+        isNaN(subPrev) || isNaN(subCurr)
+      ) {
+        alert("Please enter all values.");
+        return;
+      }
+
+      if (mainCurr < mainPrev || subCurr < subPrev) {
+        alert("Current reading must be greater than or equal to previous.");
+        return;
+      }
+
+      const mainUsed = parseFloat((mainCurr - mainPrev));
+      const subUsed = parseFloat((subCurr - subPrev).toFixed(1)); //submeter total kWh usage
+      const rate = parseFloat((mainBill / mainUsed).toFixed(2));  //rate per kWh
+      const amountToPay = (subUsed * rate).toFixed(2);
+
+      const slip = `
+        <h3>${site.toUpperCase()} - ELECTRIC BILL COMPUTATION</h3>
+        <p><strong>Billing Period:</strong> ${period}</p>
+
+        <table class="bill-table">
+          <tr><th colspan="2">Main Meter</th></tr>
+          <tr><td>Current Reading</td><td>${mainCurr}</td></tr>
+          <tr><td>Previous Reading</td><td>${mainPrev}</td></tr>
+          <tr><td>Usage (kWh)</td><td>${mainUsed}</td></tr>
+          <tr><td>Total Bill Amount</td><td>₱${mainBill.toFixed(2)}</td></tr>
+          <tr><td>Rate per kWh</td><td>₱${rate.toFixed(2)}</td></tr>
+
+          <tr><th colspan="2">Submeter</th></tr>
+          <tr><td>Current Reading</td><td>${subCurr}</td></tr>
+          <tr><td>Previous Reading</td><td>${subPrev}</td></tr>
+          <tr><td>Total Usage (kWh)</td><td>${subUsed.toFixed(1)}</td></tr>
+
+          <tr><td colspan="2" class="highlight">Bill Amount to Pay: ₱${amountToPay}</td></tr>
+        </table>
+      `;
+
+      document.getElementById("billSlip").innerHTML = slip;
+      document.getElementById("modal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    window.onload = populateBarangays;
+  </script>
+</body>
+</html>
+ 
+body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f2f2f2;
+    }
+
+    /* Nav bar */
+    nav {
+      background: #1c1c1c;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    /* Footer */
+    footer {
+      background: #1c1c1c;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+    }
+
+    h2, h3 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 12px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+    }
+
+    /* make sure modal-content stays centered */
+    .modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 20px;
+    border: 2px none black;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    }
+
+    /* position close icon in corner of entire screen overlay */
+    .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 38px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    z-index: 1001;
+    }
+    .close:hover {
+    color: red;
+    }
+
+    .bill-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .bill-table td, .bill-table th {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .bill-table th {
+      background-color: #f2f2f2;
+    }
+
+    .highlight {
+      background-color: yellow;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+
+
+
+    
