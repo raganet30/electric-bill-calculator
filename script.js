@@ -107,3 +107,19 @@ const barangays = [
       document.getElementById("modal").style.display = "none";
     }
     window.onload = populateBarangays;
+
+    function clearMainForm() {
+    document.querySelectorAll("#mainForm input").forEach(input => {
+        input.value = "";
+    });
+    document.getElementById("site").value = "";
+    document.getElementById("billFrom").value = "";
+    document.getElementById("billTo").value = "";
+    }
+
+    function clearManualForm() {
+      document.querySelectorAll('#manualForm input').forEach(el => el.value = '');
+      document.getElementById("site").value = "";
+      document.getElementById("billFrom").value = "";
+      document.getElementById("billTo").value = "";
+    }

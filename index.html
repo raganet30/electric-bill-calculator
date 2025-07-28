@@ -38,7 +38,11 @@
       <label>Previous Reading</label>
       <input type="number" id="subPrev" />
 
-      <button class="generate" onclick="generateBill('main')">Generate Bill</button>
+     <div class="button-group">
+        <button class="generate" onclick="generateBill('main')">Generate Bill</button>
+        <button class="clear-btn" onclick="clearMainForm()">Clear</button>
+      </div>
+
     </div>
 
     <div id="manualForm" class="form-section">
@@ -60,7 +64,11 @@
       <label>Submeter Previous Reading</label>
       <input type="number" id="subPrev2" />
 
-      <button class="generate" onclick="generateBill('manual')">Generate Bill</button>
+      <div class="button-group">
+        <button class="generate" onclick="generateBill('manual')">Generate Bill</button>
+        <button class="clear-btn" onclick="clearManualForm()">Clear</button>
+      </div>
+    
     </div>
   </div>
 
