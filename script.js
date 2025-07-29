@@ -1,5 +1,5 @@
 const barangays = [
-                        "Brgy. Aurora", "Brgy. Ba-ay", "Brgy. Balite", "Brgy. Balud", "Brgy. Barobaybay",
+                        "Brgy. Aurora", "Brgy. Ba-ay", "Brgy. Bahay", "Brgy. Balite", "Brgy. Balud", "Brgy. Barobaybay",
                         "Brgy. Binaliw", "Brgy. Bonifacio", "Brgy. Buenavista", "Brgy. Bugko",
                         "Brgy. Cabacungan", "Brgy. Cacaransan", "Brgy. Cag-abaca", "Brgy. Cagbayang",
                         "Brgy. Caglanipao Norte", "Brgy. Caglanipao Sur", "Brgy. Cagmanipes Sur",
@@ -13,8 +13,8 @@ const barangays = [
                         "Brgy. Malayog", "Brgy. Malino", "Brgy. Malopalo", "Brgy. Manguino-o",
                         "Brgy. McKinley", "Brgy. Naga", "Brgy. New Mahayag", "Brgy. New Rizal",
                         "Brgy. NHA Site I", "Brgy. Obayan", "Brgy. Old Mahayag", "Brgy. Palale",
-                        "Brgy. Panlayahan", "Brgy. Pasigay", "Brgy. Pena I", "Brgy. Pilar",
-                        "Brgy. Placer", "Brgy. Pologon", "Brgy. Roxas", "Brgy. Salvacion",
+                        "Brgy. Panlayahan", "Brgy. Pasigay", "Brgy. Peña I", "Brgy. Pilar",
+                        "Brgy. Placer", "Brgy. Pologon", "Brgy. Roxas", "Brgy. Saljag Main", "Brgy. Saljag Ext.", "Brgy. Salvacion",
                         "Brgy. San Agustin", "Brgy. San Juan", "Brgy. San Miguel", "Brgy. San Roque",
                         "Brgy. San Rufino",
                         "Brgy. Seven Hills", "Brgy. Sinidman Oriental", "Brgy. Somoge", "Brgy. Tagnao",
@@ -57,6 +57,13 @@ const barangays = [
         }
         const usage = (subCurr - subPrev).toFixed(1);
         const amount = (usage * rate).toFixed(2);
+        const formattedAmount = new Intl.NumberFormat('en-PH', { // 'en-PH' for Philippines English locale
+            style: 'decimal', // Use 'currency' if you want a currency symbol
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+            useGrouping: true // This ensures the comma separator
+        }).format(amount);
+
         document.getElementById("billSlip").innerHTML = `
           <h3 style="text-align:center;">${site.toUpperCase()} - ELECTRIC BILL COMPUTATION</h3>
           <p><strong>Billing Period:</strong> ${period}</p>
@@ -65,7 +72,7 @@ const barangays = [
             <tr><td>Submeter Current Reading</td><td>${subCurr}</td></tr>
             <tr><td>Submeter Previous Reading</td><td>${subPrev}</td></tr>
             <tr><td>Total Usage (kWh)</td><td>${usage}</td></tr>
-            <tr><td class="highlight">Bill Amount to Pay: </td> <td class="highlight">₱${amount}</td></tr>
+            <tr><td class="highlight">Bill Amount to Pay: </td> <td class="highlight">₱${formattedAmount}</td></tr>
           </table>`;
       } else {
         const site = document.getElementById("site").value || "N/A";
@@ -84,6 +91,14 @@ const barangays = [
         const rate = (mainBill / mainUsed).toFixed(2);
         const subUsed = (subCurr - subPrev).toFixed(1);
         const amount = (subUsed * rate).toFixed(2);
+
+        const formattedAmount = new Intl.NumberFormat('en-PH', { // 'en-PH' for Philippines English locale
+            style: 'decimal', // Use 'currency' if you want a currency symbol
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+            useGrouping: true // This ensures the comma separator
+        }).format(amount);
+
         document.getElementById("billSlip").innerHTML = `
           <h3 style="text-align:center;">${site.toUpperCase()} - ELECTRIC BILL COMPUTATION</h3>
           <p><strong>Billing Period:</strong> ${period}</p>
@@ -98,7 +113,7 @@ const barangays = [
             <tr><td>Current Reading</td><td>${subCurr}</td></tr>
             <tr><td>Previous Reading</td><td>${subPrev}</td></tr>
             <tr><td>Total Usage (kWh)</td><td>${subUsed}</td></tr>
-            <tr><td class="highlight">Bill Amount to Pay: </td><td class="highlight">₱${amount}</td></tr>
+            <tr><td class="highlight">Bill Amount to Pay: </td><td class="highlight">₱${formattedAmount}</td></tr>
           </table>`;
       }
       document.getElementById("modal").style.display = "block";

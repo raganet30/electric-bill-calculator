@@ -37,13 +37,28 @@ nav {
 .tabs button.active {
   background: #17a2b8;
   color: white;
+  
 }
 .form-section {
   display: none;
+  
 }
 .form-section.active {
   display: block;
 }
+
+/* Target all inputs of a specific type */
+  input[type="date"],
+  input[type="number"] {
+    font-size: larger; 
+  }
+
+  select {
+  font-size: 1.1em; /* Adjust as needed */
+  /* You might also want to adjust padding or height to accommodate the larger text */
+  padding: 8px;
+}
+
 label {
   font-weight: bold;
   display: block;
@@ -70,6 +85,7 @@ input, select {
       display: flex;
       gap: 10px;
       margin-top: 20px;
+     
     }
     .generate, .clear-btn {
       flex: 1;
@@ -81,9 +97,11 @@ input, select {
     }
     .generate {
       background-color: #007bff;
+      border-radius: 10px;
     }
     .clear-btn {
       background-color: #dc3545;
+      border-radius: 10px;
     }
 
 .modal {
