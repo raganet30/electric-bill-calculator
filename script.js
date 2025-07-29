@@ -5,7 +5,7 @@ const barangays = [
                         "Brgy. Caglanipao Norte", "Brgy. Caglanipao Sur", "Brgy. Cagmanipes Sur",
                         "Brgy. Cagnipa", "Brgy. Cag-olango", "Brgy. Cahumpan", "Brgy. Calanyugan",
                         "Brgy. Calapi", "Brgy. Cal-igang", "Brgy. Casandig I", "Brgy. Cogon",
-                        "Brgy. Colab-Og", "Brgy. Danao I", "Brgy. Dona Pulqueria", "Brgy. Garcia",
+                        "Brgy. Colab-Og", "Brgy. Danao I", "Brgy. Dona Pulqueria", "Brgy. Garcia", "Brgy. Gajo",
                         "Brgy. Geratag", "Brgy. Happy Valley", "Brgy. Ibol", "Brgy. Ilo",
                         "Brgy. Inoraguiao", "Brgy. Jamoog", "Brgy. Jimautan", "Brgy. Lagundi",
                         "Brgy. Lao angan", "Brgy. Lapaan", "Brgy. Libertad", "Brgy. Longsob",
