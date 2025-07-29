@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Electric Bill Slip Generator</title>
   <link rel="stylesheet" href="style.css">
- <link rel="icon" href="electricity-icon.png" type="image/png">
+  <link rel="icon" href="electricity-icon.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 
 </head>
@@ -76,7 +77,11 @@
   </div>
 
   <div id="modal" class="modal">
-    <span class="close" onclick="closeModal()">&times;</span>
+    
+    <div class="modal-header">
+      <button class="screenshot-btn" onclick="copyModalImage()"><i class="fa-solid fa-file-lines"></i></button>
+      <button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-close"></i></button>
+    </div>
     <div class="modal-content">
       <div id="billSlip"></div>
     </div>
@@ -86,7 +91,7 @@
   <p>&copy; 2025 Electric Bill Calculator | Developed by <strong>KenKen</strong></p>
 </footer>
 
-
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
  <script src="script.js"></script>
 </body>
 </html>

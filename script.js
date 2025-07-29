@@ -134,7 +134,25 @@ const barangays = [
 
     function clearManualForm() {
       document.querySelectorAll('#manualForm input').forEach(el => el.value = '');
-      document.getElementById("site").value = "";
+      document.getElementById("site2").value = "";
       document.getElementById("billFrom").value = "";
       document.getElementById("billTo").value = "";
     }
+
+
+    // function for screenshot
+  function copyModalImage() {
+  const modalContent = document.querySelector('.modal-content');
+
+  html2canvas(modalContent).then(canvas => {
+    canvas.toBlob(blob => {
+      const item = new ClipboardItem({ "image/png": blob });
+      navigator.clipboard.write([item]).then(() => {
+        alert("Screenshot copied to clipboard!");
+      }).catch(err => {
+        alert("Failed to copy. Please try again.");
+        console.error(err);
+      });
+    });
+  });
+}
