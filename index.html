@@ -21,6 +21,7 @@
     <div id="mainForm" class="form-section active">
       <label for="site">Barangay / Site</label>
       <select id="site"><option value="">-- Select Barangay --</option></select>
+      <input type="text" id="otherSite" placeholder="If not on the list pls specify location..." >
 
       <label>Billing Period From:</label>
       <input type="date" id="billFrom" />
@@ -51,7 +52,12 @@
 
     <div id="manualForm" class="form-section">
       <label for="site2">Barangay / Site</label>
-      <select id="site2"><option value="">-- Select Barangay --</option></select>
+      <select id="site2" onchange="handleOtherSite(this)">
+        <option value="">-- Select Barangay --</option>
+        <option value="others">Others (specify)</option>
+      </select>
+      <input type="text" id="otherSite2" placeholder="If not on the list pls specify location..." >
+   
 
       <label>Billing Period From:</label>
       <input type="date" id="billFrom2" />
