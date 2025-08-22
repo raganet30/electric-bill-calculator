@@ -1,7 +1,7 @@
 const barangays = [
                         "Brgy. Aurora", "Brgy. Ba-ay", "Brgy. Bahay", "Brgy. Balite", "Brgy. Balud", "Brgy. Barobaybay",
                         "Brgy. Binaliw", "Brgy. Bonifacio", "Brgy. Buenavista", "Brgy. Bugko",
-                        "Brgy. Cabacungan", "Brgy. Cacaransan", "Brgy. Cag-abaca", "Brgy. Cagbayang",
+                        "Brgy. Cabacungan", "Brgy. Cacaransan", "Brgy. Cag-abaca", "Brgy. Cagbayang", "Brgy. Cagbilwang",
                         "Brgy. Caglanipao Norte", "Brgy. Caglanipao Sur", "Brgy. Cagmanipes Sur",
                         "Brgy. Cagnipa", "Brgy. Cag-olango", "Brgy. Cahumpan", "Brgy. Calanyugan",
                         "Brgy. Calapi", "Brgy. Cal-igang", "Brgy. Casandig I", "Brgy. Cogon",
