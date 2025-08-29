@@ -44,6 +44,15 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 function generateBill(mode) {
+  // Helper rounding function: rounds to 2 decimals reliably
+  function roundToTwo(num) {
+    return (Math.round(num * 100 + 1e-10) / 100).toFixed(2);
+  }
+
+  // Helper rounding function: rounds to 1 decimal
+  function roundToOne(num) {
+    return (Math.round(num * 10 + 1e-10) / 10).toFixed(1);
+  }
 
   // IF MANUAL BILLING
   if (mode === 'manual') {
@@ -51,77 +60,88 @@ function generateBill(mode) {
     const from = document.getElementById("billFrom2").value;
     const to = document.getElementById("billTo2").value;
     const period = (from && to) ? `${formatDate(from)} to ${formatDate(to)}` : "N/A";
+
     const rate = parseFloat(document.getElementById("inputRate").value);
     const subCurr = parseFloat(document.getElementById("subCurr2").value);
     const subPrev = parseFloat(document.getElementById("subPrev2").value);
+
     if (isNaN(rate) || isNaN(subCurr) || isNaN(subPrev) || subCurr < subPrev) {
       alert("Please enter valid values."); return;
     }
-    const usage = (subCurr - subPrev).toFixed(1);
-    const amount = (usage * rate).toFixed(2);
-    const formattedAmount = new Intl.NumberFormat('en-PH', { // 'en-PH' for Philippines English locale
-      style: 'decimal', // Use 'currency' if you want a currency symbol
+
+    const usage = roundToOne(subCurr - subPrev);
+    const amount = roundToTwo(usage * rate);
+
+    const formattedAmount = new Intl.NumberFormat('en-PH', {
+      style: 'decimal',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-      useGrouping: true // This ensures the comma separator
+      useGrouping: true
     }).format(amount);
 
     document.getElementById("billSlip").innerHTML = `
-          <h3 style="text-align:center;">${site.toUpperCase()} - ELECTRIC BILL COMPUTATION</h3>
-          <p><strong>Billing Period:</strong> ${period}</p>
-          <table class="bill-table">
-            <tr><td>Rate per kWh</td><td>₱${rate.toFixed(2)}</td></tr>
-            <tr><td>Submeter Current Reading</td><td>${subCurr}</td></tr>
-            <tr><td>Submeter Previous Reading</td><td>${subPrev}</td></tr>
-            <tr><td>Total Usage (kWh)</td><td>${usage}</td></tr>
-            <tr><td class="highlight">Bill Amount to Pay: </td> <td class="highlight">₱${formattedAmount}</td></tr>
-          </table>`;
-  } else
-  // IF MAIN BILLING
-  {
+      <h3 style="text-align:center;">${site.toUpperCase()} - ELECTRIC BILL COMPUTATION</h3>
+      <p><strong>Billing Period:</strong> ${period}</p>
+      <table class="bill-table">
+        <tr><td>Rate per kWh</td><td>₱${roundToTwo(rate)}</td></tr>
+        <tr><td>Submeter Current Reading</td><td>${subCurr}</td></tr>
+        <tr><td>Submeter Previous Reading</td><td>${subPrev}</td></tr>
+        <tr><td>Total Usage (kWh)</td><td>${usage}</td></tr>
+        <tr><td class="highlight">Bill Amount to Pay: </td> <td class="highlight">₱${formattedAmount}</td></tr>
+      </table>`;
+  } else {
+    // IF MAIN BILLING
     const site = document.getElementById("site").value || document.getElementById("otherSite").value || "N/A";
     const from = document.getElementById("billFrom").value;
     const to = document.getElementById("billTo").value;
     const period = (from && to) ? `${formatDate(from)} to ${formatDate(to)}` : "N/A";
+
     const mainCurr = parseFloat(document.getElementById("mainCurr").value);
     const mainPrev = parseFloat(document.getElementById("mainPrev").value);
     const mainBill = parseFloat(document.getElementById("mainBill").value);
     const subCurr = parseFloat(document.getElementById("subCurr").value);
     const subPrev = parseFloat(document.getElementById("subPrev").value);
+
     if ([mainCurr, mainPrev, mainBill, subCurr, subPrev].some(val => isNaN(val)) || mainCurr < mainPrev || subCurr < subPrev) {
       alert("Please enter valid values."); return;
     }
-    const mainUsed = (mainCurr - mainPrev);
-    const rate = (mainBill / mainUsed).toFixed(2);
-    const subUsed = (subCurr - subPrev).toFixed(1);
-    const amount = (subUsed * rate).toFixed(2);
 
-    const formattedAmount = new Intl.NumberFormat('en-PH', { // 'en-PH' for Philippines English locale
-      style: 'decimal', // Use 'currency' if you want a currency symbol
+    const mainUsed = mainCurr - mainPrev;
+    const rawRate = mainBill / mainUsed;
+    const rate = roundToTwo(rawRate);
+
+    const subUsed = roundToOne(subCurr - subPrev);
+    const amount = roundToTwo(subUsed * rate);
+
+    const formattedAmount = new Intl.NumberFormat('en-PH', {
+      style: 'decimal',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-      useGrouping: true // This ensures the comma separator
+      useGrouping: true
     }).format(amount);
 
     document.getElementById("billSlip").innerHTML = `
-          <h3 style="text-align:center;">${site.toUpperCase()} - ELECTRIC BILL COMPUTATION</h3>
-          <p><strong>Billing Period:</strong> ${period}</p>
-          <table class="bill-table">
-            <tr><th colspan="2">Main Meter</th></tr>
-            <tr><td>Current Reading</td><td>${mainCurr}</td></tr>
-            <tr><td>Previous Reading</td><td>${mainPrev}</td></tr>
-            <tr><td>Usage (kWh)</td><td>${mainUsed}</td></tr>
-            <tr><td>Total Bill Amount</td><td>₱${mainBill.toFixed(2)}</td></tr>
-            <tr><td>Rate per kWh</td><td>₱${rate}</td></tr>
-            <tr><th colspan="2">Submeter</th></tr>
-            <tr><td>Current Reading</td><td>${subCurr}</td></tr>
-            <tr><td>Previous Reading</td><td>${subPrev}</td></tr>
-            <tr><td>Total Usage (kWh)</td><td>${subUsed}</td></tr>
-            <tr><td class="highlight">Bill Amount to Pay: </td><td class="highlight">₱${formattedAmount}</td></tr>
-          </table>`;
+      <h3 style="text-align:center;">${site.toUpperCase()} - ELECTRIC BILL COMPUTATION</h3>
+      <p><strong>Billing Period:</strong> ${period}</p>
+      <table class="bill-table">
+        <tr><th colspan="2">Main Meter</th></tr>
+        <tr><td>Current Reading</td><td>${mainCurr}</td></tr>
+        <tr><td>Previous Reading</td><td>${mainPrev}</td></tr>
+        <tr><td>Usage (kWh)</td><td>${mainUsed}</td></tr>
+        <tr><td>Total Current Bill </td><td>₱${new Intl.NumberFormat('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(mainBill)}</td></tr>
+        <tr><td>Rate per kWh</td><td>₱${rate}</td></tr>
+        <tr><th colspan="2">Submeter</th></tr>
+        <tr><td>Current Reading</td><td>${subCurr}</td></tr>
+        <tr><td>Previous Reading</td><td>${subPrev}</td></tr>
+        <tr><td>Total Usage (kWh)</td><td>${subUsed}</td></tr>
+        <tr><td class="highlight">Bill Amount to Pay: </td><td class="highlight">₱${formattedAmount}</td></tr>
+      </table>`;
   }
+
   document.getElementById("modal").style.display = "block";
 }
+
+
 function closeModal() {
   document.getElementById("modal").style.display = "none";
 }
